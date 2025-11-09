@@ -1,0 +1,93 @@
+/* Container holding both info & marksheet */
+.student-box {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px auto;
+  padding: 15px;
+  max-width: 700px;
+}
+
+/* Left box */
+.info-box {
+  flex: 1;
+  background: #e3f2fd; /* light blue */
+  border: 2px solid #2196f3;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Right box */
+.marks-box {
+  flex: 2;
+  background: #fff8e1; /* light yellow */
+  border: 2px solid #fbc02d;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.marks-box h3 {
+  margin-top: 0;
+  text-align: center;
+  text-decoration: underline;
+  color: #d84315;
+}
+
+.marks-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.marks-box li {
+  margin: 5px 0;
+}
+
+/* Result colors */
+.pass {
+  color: green;
+  font-weight: bold;
+}
+
+.fail {
+  color: red;
+  font-weight: bold;
+}
+
+/* Header styles */
+.header {
+  background-color: #2196f3;   /* Blue background */
+  padding: 20px;
+  text-align: center;          /* Center the text */
+}
+
+.header .title {
+  margin: 0;
+  color: rgb(255, 251, 0);                  /* Red text */
+  font-size: 32px;             /* Bigger than subtitle */
+  font-weight: 900;
+   text-shadow: 2px 2px 4px rgb(228, 240, 57);
+}
+
+.header .subtitle {
+  margin: 8px 0 0;
+  color: rgb(238, 246, 7);                /* Black text */
+  font-size: 32px;             /* Smaller than main title */
+  font-weight: 800;            /* Semi-bold */
+}
+
+/* Footer styles */
+.footer {
+  background-color: #2196f3;   /* Blue background */
+  padding: 15px;
+  text-align: center;          /* Center text */
+  margin-top: 20px;
+}
+
+.footer p {
+  margin: 0;
+  color: yellow;               /* Yellow text */
+  font-size: 14px;
+}

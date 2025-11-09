@@ -1,0 +1,13 @@
+{
+  "name": "fleet-workspace",
+  "private": true,
+  "scripts": {
+    "client": "cd fleet-frontend && npm run dev",
+    "server": "cd fleet-manager && npx nodemon server.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1"
+  }
+}
