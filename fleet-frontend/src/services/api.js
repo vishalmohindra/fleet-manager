@@ -1,10 +1,12 @@
+// frontend/service/api.js
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // Make sure backend runs here
+  baseURL: 'http://localhost:3000',
 });
 
-export const fetchTrucks = () => api.get('/trucks');
-export const createTruck = (data) => api.post('/trucks', data);
-export const updateTruck = (id, data) => api.put(`/trucks/${id}`, data);
-export const deleteTruck = (id) => api.delete(`/trucks/${id}`);
+// API functions with backend switch: 'mongo' or 'mysql'
+export const fetchTrucks = (backend = 'mongo') => api.get(`/trucks-${backend}`);
+export const createTruck = (data, backend = 'mongo') => api.post(`/trucks-${backend}`, data);
+export const updateTruck = (id, data, backend = 'mongo') => api.put(`/trucks-${backend}/${id}`, data);
+export const deleteTruck = (id, backend = 'mongo') => api.delete(`/trucks-${backend}/${id}`);
