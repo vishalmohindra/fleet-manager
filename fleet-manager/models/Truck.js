@@ -1,3 +1,4 @@
+// backend/models/Truck.js
 const mongoose = require('mongoose');
 
 const truckSchema = new mongoose.Schema({
@@ -8,6 +9,5 @@ const truckSchema = new mongoose.Schema({
 });
 
 const Truck = mongoose.model('Truck', truckSchema, 'trucks');
-
 
 module.exports = Truck;

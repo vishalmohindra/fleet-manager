@@ -1,38 +1,31 @@
+// backend/server.js
 require('dotenv').config();
 const mongoose = require('mongoose');
 const express = require('express');
 const cors = require('cors');
 const app = express();
+
 app.use(cors());
+app.use(express.json());
 
-// MySQL connection added here
-const db = require('./db'); // <-- Added: MySQL pool from db.js
+const db = require('./db');
+const Truck = require('./models/Truck');
 
-// Connect to MongoDB as before
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected!'))
-  .catch((err) => console.log('MongoDB connection error:', err));
+  .catch(err => console.error('MongoDB connection error:', err));
 
-app.use(express.json()); // Middleware to parse JSON bodies
-
-const Truck = require('./models/Truck'); // MongoDB Truck model
-
-
-// GET /trucks using MySQL instead of MongoDB
-app.get('/trucks', async (req, res) => {
+// MongoDB routes
+app.get('/trucks-mongo', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT * FROM trucks'); // <-- MySQL query
-    res.json(rows);
+    const trucks = await Truck.find();
+    res.json(trucks);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 });
 
-
-// Keep other endpoints using MongoDB as before:
-
-// Create a new truck (MongoDB)
-app.post('/trucks', async (req, res) => {
+app.post('/trucks-mongo', async (req, res) => {
   try {
     const truck = new Truck(req.body);
     await truck.save();
@@ -42,8 +35,7 @@ app.post('/trucks', async (req, res) => {
   }
 });
 
-// Update truck (MongoDB)
-app.put('/trucks/:id', async (req, res) => {
+app.put('/trucks-mongo/:id', async (req, res) => {
   try {
     const truck = await Truck.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!truck) return res.status(404).json({ message: 'Truck not found' });
@@ -53,8 +45,7 @@ app.put('/trucks/:id', async (req, res) => {
   }
 });
 
-// Delete truck (MongoDB)
-app.delete('/trucks/:id', async (req, res) => {
+app.delete('/trucks-mongo/:id', async (req, res) => {
   try {
     const truck = await Truck.findByIdAndDelete(req.params.id);
     if (!truck) return res.status(404).json({ message: 'Truck not found' });
@@ -64,13 +55,58 @@ app.delete('/trucks/:id', async (req, res) => {
   }
 });
 
+// MySQL routes
+app.get('/trucks-mysql', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM trucks');
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
-// Basic home route
+app.post('/trucks-mysql', async (req, res) => {
+  try {
+    const { vehicleNumber, driverName, lastServiceDate, serviceExpenditure } = req.body;
+    const [result] = await db.query(
+      'INSERT INTO trucks (vehicleNumber, driverName, lastServiceDate, serviceExpenditure) VALUES (?, ?, ?, ?)',
+      [vehicleNumber, driverName, lastServiceDate, serviceExpenditure]
+    );
+    res.status(201).json({ id: result.insertId, vehicleNumber, driverName, lastServiceDate, serviceExpenditure });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+app.put('/trucks-mysql/:id', async (req, res) => {
+  try {
+    const { vehicleNumber, driverName, lastServiceDate, serviceExpenditure } = req.body;
+    const [result] = await db.query(
+      'UPDATE trucks SET vehicleNumber = ?, driverName = ?, lastServiceDate = ?, serviceExpenditure = ? WHERE id = ?',
+      [vehicleNumber, driverName, lastServiceDate, serviceExpenditure, req.params.id]
+    );
+    if (result.affectedRows === 0) return res.status(404).json({ message: 'Truck not found' });
+    res.json({ id: req.params.id, vehicleNumber, driverName, lastServiceDate, serviceExpenditure });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+app.delete('/trucks-mysql/:id', async (req, res) => {
+  try {
+    const [result] = await db.query('DELETE FROM trucks WHERE id = ?', [req.params.id]);
+    if (result.affectedRows === 0) return res.status(404).json({ message: 'Truck not found' });
+    res.json({ message: 'Truck deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('Welcome to FleetManager!');
 });
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server running at http://localhost:${PORT}`);
 });

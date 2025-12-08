@@ -1,13 +1,14 @@
-const mysql = require('mysql2');
+// backend/db.js
+const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
-  host: 'localhost',  // or your MySQL host
-  user: 'root',       // your MySQL username
-  password: 'password', // your password
-  database: 'fleet_manager_db', // your database name
+  host: process.env.MYSQL_HOST || 'localhost',
+  user: process.env.MYSQL_USER || 'root',
+  password: process.env.MYSQL_PASSWORD || '',
+  database: process.env.MYSQL_DATABASE || 'fleetmanager',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-module.exports = pool.promise();
+module.exports = pool;
